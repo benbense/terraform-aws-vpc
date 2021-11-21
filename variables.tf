@@ -1,5 +1,5 @@
 variable "cidr_size" {
-  description = "CIDR Size"
+  description = "VPC CIDR Size"
   type        = string
 }
 
@@ -9,6 +9,6 @@ variable "vpc_name" {
 }
 
 variable "availability_zones" {
-  description = "Availability zones to account for"
+  description = "Number of availability zones to account for"
   type        = number
 }
