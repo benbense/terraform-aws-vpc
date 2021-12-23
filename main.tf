@@ -114,7 +114,7 @@ resource "aws_route_table_association" "public_rt_assign" {
 
 resource "aws_iam_role" "describe_instances" {
   name = "describe_instances"
-  assume_role_policy = {
+  assume_role_policy = jsonencode({
     "Version" : "2012-10-17",
     "Statement" : [
       {
@@ -124,23 +124,23 @@ resource "aws_iam_role" "describe_instances" {
         },
         "Effect" : "Allow",
         "Sid" : ""
-      }
+      },
     ]
-  }
+  })
 }
 
 resource "aws_iam_policy" "describe_instances" {
   name = "describe_instances"
-  policy = {
+  policy = jsonencode({
     "Version" : "2012-10-17",
     "Statement" : [
       {
         "Effect" : "Allow",
         "Action" : "ec2:DescribeInstances",
         "Resource" : "*"
-      }
+      },
     ]
-  }
+  })
 }
 
 resource "aws_iam_policy_attachment" "describe_instances" {
