@@ -41,7 +41,7 @@ resource "aws_subnet" "public_subnets" {
   availability_zone       = data.aws_availability_zones.available.names[count.index]
   cidr_block              = cidrsubnet(var.cidr_size, 8, 100 + count.index)
   tags = {
-    "Name" = "Public-${count.index}"
+    "Name" = "Public-${count.index + 100}"
   }
 }
 
@@ -110,4 +110,46 @@ resource "aws_route_table_association" "public_rt_assign" {
   count          = length(aws_subnet.private_subnets)
   subnet_id      = aws_subnet.public_subnets[count.index].id
   route_table_id = aws_route_table.public_web.id
+}
+
+resource "aws_iam_role" "describe_instances" {
+  name = "describe_instances"
+  assume_role_policy = {
+    "Version" : "2012-10-17",
+    "Statement" : [
+      {
+        "Action" : "sts:AssumeRole",
+        "Principal" : {
+          "Service" : "ec2.amazonaws.com"
+        },
+        "Effect" : "Allow",
+        "Sid" : ""
+      }
+    ]
+  }
+}
+
+resource "aws_iam_policy" "describe_instances" {
+  name = "describe_instances"
+  policy = {
+    "Version" : "2012-10-17",
+    "Statement" : [
+      {
+        "Effect" : "Allow",
+        "Action" : "ec2:DescribeInstances",
+        "Resource" : "*"
+      }
+    ]
+  }
+}
+
+resource "aws_iam_policy_attachment" "describe_instances" {
+  name       = "describe_instances"
+  roles      = [aws_iam_role.describe_instances.name]
+  policy_arn = aws_iam_policy.describe_instances.arn
+}
+
+resource "aws_iam_instance_profile" "describe_instances" {
+  name = "describe_instances"
+  role = aws_iam_role.describe_instances.name
 }
