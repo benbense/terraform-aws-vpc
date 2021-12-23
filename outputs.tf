@@ -17,3 +17,8 @@ output "private_subnets_ids" {
   description = "ID of the private subnets"
   value       = aws_subnet.private_subnets.*.id
 }
+
+output "instance_profile_name" {
+  description = "IAM Policy name"
+  value       = aws_iam_instance_profile.describe_instances.name
+}
