@@ -19,7 +19,8 @@ data "aws_availability_zones" "available" {
 resource "aws_vpc" "vpc" {
   cidr_block = var.cidr_size
   tags = {
-    "Name" = "${var.vpc_name}"
+    "Name"                                        = "${var.vpc_name}"
+    "kubernetes.io/cluster/${local.cluster_name}" = "shared"
   }
 }
 
@@ -30,7 +31,9 @@ resource "aws_subnet" "private_subnets" {
   availability_zone = data.aws_availability_zones.available.names[count.index]
   cidr_block        = cidrsubnet(var.cidr_size, 8, count.index)
   tags = {
-    "Name" = "Private-${count.index}"
+    "Name"                                        = "Private-${count.index}"
+    "kubernetes.io/cluster/${local.cluster_name}" = "shared"
+    "kubernetes.io/role/internal-elb"             = "1"
   }
 }
 
@@ -41,7 +44,9 @@ resource "aws_subnet" "public_subnets" {
   availability_zone       = data.aws_availability_zones.available.names[count.index]
   cidr_block              = cidrsubnet(var.cidr_size, 8, 100 + count.index)
   tags = {
-    "Name" = "Public-${count.index + 100}"
+    "Name"                                        = "Public-${count.index + 100}"
+    "kubernetes.io/cluster/${local.cluster_name}" = "shared"
+    "kubernetes.io/role/elb"                      = "1"
   }
 }
 
@@ -55,9 +60,8 @@ resource "aws_internet_gateway" "public-igw" {
 
 # NAT Gateway Creation
 resource "aws_nat_gateway" "private-ngw" {
-  count         = length(aws_subnet.public_subnets)
-  subnet_id     = aws_subnet.public_subnets[count.index].id
-  allocation_id = aws_eip.ngw-eip[count.index].id
+  subnet_id     = aws_subnet.public_subnets[0].id
+  allocation_id = aws_eip.ngw-eip.id
   tags = {
     "Name" = "ngw-${count.index}"
   }
@@ -65,7 +69,6 @@ resource "aws_nat_gateway" "private-ngw" {
 
 # Elastic IP's Creation
 resource "aws_eip" "ngw-eip" {
-  count = length(aws_subnet.public_subnets)
   tags = {
     "Name" = "NAT-{count.index}"
   }
@@ -97,7 +100,7 @@ resource "aws_route" "private_routes" {
   count                  = length(aws_route_table.private_rt)
   destination_cidr_block = "0.0.0.0/0"
   route_table_id         = aws_route_table.private_rt[count.index].id
-  gateway_id             = aws_nat_gateway.private-ngw[count.index].id
+  gateway_id             = aws_nat_gateway.private-ngw.id
 }
 
 resource "aws_route_table_association" "private_rt_assign" {
@@ -152,4 +155,13 @@ resource "aws_iam_policy_attachment" "describe_instances" {
 resource "aws_iam_instance_profile" "describe_instances" {
   name = "describe_instances"
   role = aws_iam_role.describe_instances.name
+}
+
+resource "random_string" "suffix" {
+  length  = 8
+  special = false
+}
+
+locals {
+  cluster_name = "${var.vpc_name}-eks-${random_string.suffix.result}"
 }
