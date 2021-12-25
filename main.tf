@@ -63,14 +63,14 @@ resource "aws_nat_gateway" "private-ngw" {
   subnet_id     = aws_subnet.public_subnets[0].id
   allocation_id = aws_eip.ngw-eip.id
   tags = {
-    "Name" = "ngw-${count.index}"
+    "Name" = "ngw"
   }
 }
 
 # Elastic IP's Creation
 resource "aws_eip" "ngw-eip" {
   tags = {
-    "Name" = "NAT-{count.index}"
+    "Name" = "ngw-eip"
   }
 }
 
