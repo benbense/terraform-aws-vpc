@@ -22,3 +22,8 @@ output "instance_profile_name" {
   description = "IAM Policy name"
   value       = aws_iam_instance_profile.describe_instances.name
 }
+
+output "cluster_name" {
+  description = "EKS Cluster name"
+  value       = local.cluster_name
+}
