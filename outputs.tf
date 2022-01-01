@@ -27,3 +27,8 @@ output "cluster_name" {
   description = "EKS Cluster name"
   value       = local.cluster_name
 }
+
+output "iam_role_arn" {
+  description = "ARN Of Describe Instances Role"
+  value       = aws_iam_role.describe_instances.arn
+}
