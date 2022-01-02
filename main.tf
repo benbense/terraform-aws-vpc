@@ -139,7 +139,11 @@ resource "aws_iam_policy" "describe_instances" {
     "Statement" : [
       {
         "Effect" : "Allow",
-        "Action" : "ec2:DescribeInstances",
+        "Action" : [
+          "ec2:Describe*",
+          "sts:AssumeRole",
+          "eks:DescribeCluster"
+        ],
         "Resource" : "*"
       },
     ]
