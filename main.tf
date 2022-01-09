@@ -60,17 +60,19 @@ resource "aws_internet_gateway" "public-igw" {
 
 # NAT Gateway Creation
 resource "aws_nat_gateway" "private-ngw" {
-  subnet_id     = aws_subnet.public_subnets[0].id
-  allocation_id = aws_eip.ngw-eip.id
+  count         = length(aws_subnet.public_subnets)
+  subnet_id     = aws_subnet.public_subnets[count.index].id
+  allocation_id = aws_eip.ngw-eip[count.index].id
   tags = {
-    "Name" = "ngw"
+    "Name" = "ngw-${count.index}"
   }
 }
 
 # Elastic IP's Creation
 resource "aws_eip" "ngw-eip" {
+  count = length(aws_subnet.public_subnets)
   tags = {
-    "Name" = "ngw-eip"
+    "Name" = "NAT-${count.index}"
   }
 }
 
