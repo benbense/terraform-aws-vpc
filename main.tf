@@ -102,7 +102,7 @@ resource "aws_route" "private_routes" {
   count                  = length(aws_route_table.private_rt)
   destination_cidr_block = "0.0.0.0/0"
   route_table_id         = aws_route_table.private_rt[count.index].id
-  gateway_id             = aws_nat_gateway.private-ngw.id
+  gateway_id             = aws_nat_gateway.private-ngw[count.index].id
 }
 
 resource "aws_route_table_association" "private_rt_assign" {
