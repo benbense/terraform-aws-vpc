@@ -171,3 +171,9 @@ resource "random_string" "suffix" {
 locals {
   cluster_name = "${var.vpc_name}-eks-${random_string.suffix.result}"
 }
+
+resource "aws_iam_server_certificate" "kandula_ssl_cert" {
+  name             = "kandula_ssl_cert"
+  certificate_body = var.cert_body
+  private_key      = var.cert_private_key
+}
