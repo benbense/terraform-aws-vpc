@@ -32,3 +32,6 @@ output "iam_role_arn" {
   description = "ARN Of Describe Instances Role"
   value       = aws_iam_role.describe_instances.arn
 }
+output "kandula_ssl_cert" {
+
+}
