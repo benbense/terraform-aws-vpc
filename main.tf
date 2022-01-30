@@ -22,6 +22,8 @@ resource "aws_vpc" "vpc" {
     "Name"                                        = "${var.vpc_name}"
     "kubernetes.io/cluster/${local.cluster_name}" = "shared"
   }
+  enable_dns_hostnames = true
+  enable_dns_support   = true
 }
 
 # Subnets Creation
