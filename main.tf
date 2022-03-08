@@ -184,6 +184,6 @@ resource "aws_iam_server_certificate" "kandula_ssl_cert" {
 resource "aws_route53_zone" "private" {
   name = "kandula"
   vpc {
-    vpc_id = var.vpc_id
+    vpc_id = aws_vpc.vpc.id
   }
 }
