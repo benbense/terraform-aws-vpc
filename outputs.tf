@@ -36,3 +36,7 @@ output "kandula_ssl_cert" {
   description = "ARN of SSL Certificate"
   value       = aws_iam_server_certificate.kandula_ssl_cert.arn
 }
+output "route53_zone_id" {
+  description = "Hosted Zone ID"
+  value       = aws_route53_zone.private.zone_id
+}

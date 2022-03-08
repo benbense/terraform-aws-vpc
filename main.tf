@@ -179,3 +179,11 @@ resource "aws_iam_server_certificate" "kandula_ssl_cert" {
   certificate_body = var.cert_body
   private_key      = var.cert_private_key
 }
+
+
+resource "aws_route53_zone" "private" {
+  name = "kandula"
+  vpc {
+    vpc_id = var.vpc_id
+  }
+}
