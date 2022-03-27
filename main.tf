@@ -22,6 +22,8 @@ resource "aws_vpc" "vpc" {
     "Name"                                        = "${var.vpc_name}"
     "kubernetes.io/cluster/${local.cluster_name}" = "shared"
   }
+  enable_dns_hostnames = true
+  enable_dns_support   = true
 }
 
 # Subnets Creation
@@ -177,4 +179,12 @@ resource "aws_iam_server_certificate" "kandula_ssl_cert" {
   name             = "kandula_ssl_cert"
   certificate_body = var.cert_body
   private_key      = var.cert_private_key
+}
+
+
+resource "aws_route53_zone" "private" {
+  name = "kandula"
+  vpc {
+    vpc_id = aws_vpc.vpc.id
+  }
 }
