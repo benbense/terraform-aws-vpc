@@ -147,7 +147,7 @@ resource "aws_iam_policy" "describe_instances" {
           "ec2:Describe*",
           "sts:AssumeRole",
           "eks:DescribeCluster",
-          "s3:GetObject"
+          "s3:*"
         ],
         "Resource" : "*"
       },
